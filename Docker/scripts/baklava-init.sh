@@ -22,8 +22,8 @@ if [ "$1" = 'deploy' ]; then
         cp -iR $BAKLAVA_CONFIG $DEPLOY_FOLDER/
         cd $DEPLOY_FOLDER/config
         terraform init && \
-            terraform validate && \
-            terraform apply
+            terraform validate -var DEPLOY_FOLDER=$DEPLOY_FOLDER && \
+            terraform apply -var DEPLOY_FOLDER=$DEPLOY_FOLDER
 
     else
 
@@ -33,6 +33,7 @@ if [ "$1" = 'deploy' ]; then
 
 else
 
+    echo "Running $@"
     exec "$@"
 
 fi
