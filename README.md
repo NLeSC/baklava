@@ -1,21 +1,31 @@
 # About
+
 Scripts to deploy a kubernetes application from scratch. The name was chosen because [baklava](https://en.wikipedia.org/wiki/Baklava) consists of small pieces, like we put many technologies together, and has many layers as in Docker images.
+
+# Technologies
+
+- Terraform
+- Ansible
+- Kubespray
 
 # Usage
 
 ## 1-Pull the Docker image from Docker Hub or build it
 
 ### To pull it:
+
 ```shell
 docker pull nlesc/baklava:latest
 ```
 
 ### To build it:
+
 ```shell
 docker build --network=host -t nlesc/baklava ./Docker
 ```
 
 ## 2-Generate a ssh-key
+
 This will generate a ssh-key without a passphrase
 ```shell
 ssh-keygen -b 4096 -t rsa -f id_rsa_baklava -q -P ""
@@ -49,6 +59,7 @@ docker run --rm --net=host -it \
 ```
 
 ## 5-Deploy the cluster
+
 ```shell
 cd /baklava/config
 terraform init
