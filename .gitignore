@@ -3,6 +3,8 @@ terraform.tfstate*
 *.retry 
 .terraform
 
+deployment/*
+
 */terraform.tfstate* 
 */*.retry 
 */.terraform
