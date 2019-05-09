@@ -32,9 +32,6 @@ Edit **config/opennebula_k8s.tpl** to adjust the following VM settings:
     IMAGE_ID = "YOUR_IMAGE_ID"
     MEMORY = "4096"
     NIC = [
-      NETWORK = "internet",
-      NETWORK_UNAME = "oneadmin" ]
-    NIC = [
       NETWORK = "INTERNAL_NETWORK_NAME",
       NETWORK_UNAME = "NETWORK_USERNAME" ]
 
