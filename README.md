@@ -24,16 +24,9 @@ docker pull nlesc/baklava:latest
 docker build --network=host -t nlesc/baklava ./Docker
 ```
 
-## 2-Generate a ssh-key
+## 2-Settings
 
-This will generate a ssh-key without a passphrase
-```shell
-ssh-keygen -b 4096 -t rsa -f id_rsa_baklava -q -P ""
-```
-
-## 3-Settings
-
-### 3.1 VM configuration (template)
+### 2.1 VM configuration (template)
 
 Edit **config/opennebula_k8s.tpl** to adjust the following VM settings:
 
@@ -45,31 +38,24 @@ Edit **config/opennebula_k8s.tpl** to adjust the following VM settings:
       NETWORK = "INTERNAL_NETWORK_NAME",
       NETWORK_UNAME = "NETWORK_USERNAME" ]
 
-### 3.2 Credentials
+### 2.2 Credentials
+
 Edit **config/variables.tf** and set user credentials.
 
-## 4-Run the Docker image
+## 3-Deploy the cluster
 
 ```shell
 docker run --rm --net=host -it \
   -v $(pwd)/config:/baklava/config \
-  -v $(pwd)/id_rsa_baklava.pub:/baklava/id_rsa_baklava.pub \
-  -v $(pwd)/id_rsa_baklava:/baklava/id_rsa_baklava \
-  nlesc/baklava:latest /bin/bash
-```
-
-## 5-Deploy the cluster
-
-```shell
-cd /baklava/config
-terraform init
-terraform apply
+  -v $(pwd)/deployment:/baklava/deployment \
+  nlesc/baklava:latest
 ```
 
 Confirm the planned changes by typing **yes**
 
 # Connecting to the nodes
 
+## ssh to nodes
 ```shell
 ssh -i /baklava/id_rsa_baklava root@SERVER_IP
 ```
