@@ -46,8 +46,8 @@ Edit **config/variables.tf** and set user credentials.
 ```shell
 docker run --rm --net=host -it \
   -v $(pwd)/config:/baklava/config \
-  -v $(pwd)//id_rsa_baklava.pub:/baklava/id_rsa_baklava.pub \
-  -v $(pwd)//id_rsa_baklava:/baklava/id_rsa_baklava \
+  -v $(pwd)/id_rsa_baklava.pub:/baklava/id_rsa_baklava.pub \
+  -v $(pwd)/id_rsa_baklava:/baklava/id_rsa_baklava \
   nlesc/baklava:latest /bin/bash
 ```
 
