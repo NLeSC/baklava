@@ -1,0 +1,20 @@
+---
+- hosts: all
+  # remote_user: root
+  # become: true
+  tasks:
+    - name: Set up custom firewall rules.
+      command: "ufw disable"
+      register: ufwdisable
+    - debug:
+        var: ufwdisable.stdout_lines
+    - debug:
+        var: ufwdisable.stderr_lines
+
+    - name: Set up custom firewall rules.
+      command: "ufw status"
+      register: ufwstatus
+    - debug:
+        var: ufwstatus.stdout_lines
+    - debug:
+        var: ufwstatus.stderr_lines
