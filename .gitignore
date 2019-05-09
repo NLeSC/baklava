@@ -1,0 +1,14 @@
+id_rsa_*
+terraform.tfstate*
+*.retry 
+.terraform
+
+*/terraform.tfstate* 
+*/*.retry 
+*/.terraform
+*/id_rsa_*
+
+*.backup
+*.bck
+*.tmp
+*.temp
