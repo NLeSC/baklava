@@ -3,22 +3,23 @@ FROM alpine:latest
 # install packages
 RUN apk update && \
   apk add --no-cache \
-  terraform ansible \
+  terraform \
   git \
-  python python2-dev python3-dev \
+  python3 python3-dev \
   openssh \
   go bzr \
-  musl-dev \
+  musl-dev libffi-dev openssl-dev \
+  make \
   bash
 
 # cleanup
 RUN rm -rf /tmp/* /var/cache/apk/*
 
-# install runtastic opennebula terraform provider
+# opennebula provider
 RUN go get -v github.com/runtastic/terraform-provider-opennebula && \
     go install -v github.com/runtastic/terraform-provider-opennebula
 
-# set opennebula driver in .terraformrc
+# add opennebula provider to .terraformrc
 RUN echo -e 'providers {\n\
  opennebula = "/root/go/bin/terraform-provider-opennebula"\n\
  }'\
@@ -35,6 +36,7 @@ RUN git clone https://github.com/kubernetes-incubator/kubespray.git
 
 # install kubespray requirements
 RUN pip3 install --upgrade pip && \
+    pip3 install ansible && \
     pip3 install -r kubespray/requirements.txt
 
 ENV BAKLAVA_HOME /baklava
