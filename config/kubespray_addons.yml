@@ -1,0 +1,35 @@
+---
+- hosts: localhost
+  # remote_user: root
+  # become: true
+  tasks:
+
+    - name: Enable helm
+      lineinfile:
+        path: /baklava/kubespray/inventory/sample/group_vars/k8s-cluster/addons.yml
+        regexp: '^helm_enabled'
+        line: 'helm_enabled: true'
+
+    - name: Enable local path provisioner
+      lineinfile:
+        path: /baklava/kubespray/inventory/sample/group_vars/k8s-cluster/addons.yml
+        regexp: '^local_path_provisioner_enabled'
+        line: 'local_path_provisioner_enabled: true'
+
+    - name: Enable local volume provisioner
+      lineinfile:
+        path: /baklava/kubespray/inventory/sample/group_vars/k8s-cluster/addons.yml
+        regexp: '^local_volume_provisioner_enabled'
+        line: 'local_volume_provisioner_enabled: true'
+
+    - name: Enable Ingress Nginx
+      lineinfile:
+        path: /baklava/kubespray/inventory/sample/group_vars/k8s-cluster/addons.yml
+        regexp: '^ingress_nginx_enabled'
+        line: 'ingress_nginx_enabled: true'
+
+    - name: Enable Cert Manager
+      lineinfile:
+        path: /baklava/kubespray/inventory/sample/group_vars/k8s-cluster/addons.yml
+        regexp: '^cert_manager_enabled'
+        line: 'cert_manager_enabled: true'
