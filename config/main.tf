@@ -17,7 +17,7 @@ resource "opennebula_template" "one-kube-template" {
 }
 
 resource "opennebula_vm" "kube-node" {
-        name = "k8s-node${count.index}"
+        name = "node${count.index+1}"
         template_id = "${opennebula_template.one-kube-template.id}"
         permissions = "600"
         count = "${var.number_of_nodes}"
