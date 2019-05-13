@@ -72,7 +72,7 @@ ssh -i ./deployment/cluster0/id_rsa_baklava root@SERVER_IP
 
 You can connect to Kubernetes dashboard (web ui) using the link below.
 
-[https://MASTER_IP:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy](https://145.100.58.244:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy)
+[https://MASTER_IP:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy](https://MASTER_IP:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy)
 
 **MASTER_IP** is the ip address of the master node (usually node1).
 
@@ -101,7 +101,6 @@ kubectl cluster-info dump
 ```shell
 kubectl get --all-namespaces pods
 ```
-
 
 ## Important notes
 
