@@ -22,11 +22,11 @@
         regexp: '^local_volume_provisioner_enabled'
         line: 'local_volume_provisioner_enabled: true'
 
-    - name: Enable Ingress Nginx
-      lineinfile:
-        path: /baklava/kubespray/inventory/sample/group_vars/k8s-cluster/addons.yml
-        regexp: '^ingress_nginx_enabled'
-        line: 'ingress_nginx_enabled: true'
+    # - name: Enable Ingress Nginx
+    #   lineinfile:
+    #     path: /baklava/kubespray/inventory/sample/group_vars/k8s-cluster/addons.yml
+    #     regexp: '^ingress_nginx_enabled'
+    #     line: 'ingress_nginx_enabled: true'
 
     - name: Enable Cert Manager
       lineinfile:
