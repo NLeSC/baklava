@@ -7,6 +7,7 @@ Scripts to deploy a kubernetes application from scratch. The name was chosen bec
 - Terraform
 - Ansible
 - Kubespray
+- [Metallb](https://metallb.universe.tf/) load balancer
 
 ## Usage
 
@@ -109,4 +110,3 @@ The firewall is disabled at the moment.
 ## TODO
 
 - Persistent volumes
-- Load balancer

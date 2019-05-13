@@ -49,6 +49,10 @@ resource "null_resource" "kubernetes" {
                 command = "sleep 30; ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${var.DEPLOY_FOLDER}/${var.cluster_name}/hosts.yaml /baklava/kubespray/cluster.yml --private-key=/baklava/id_rsa_baklava -v"
         }
 
+        provisioner "local-exec" {
+                command = "sleep 30; ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${var.DEPLOY_FOLDER}/${var.cluster_name}/hosts.yaml /baklava/kubespray/contrib/metallb/metallb.yml --private-key=/baklava/id_rsa_baklava -v"
+        }
+
 }
 
 output "kube-node-vm_id" {
