@@ -2,27 +2,21 @@
 
 Scripts to deploy a kubernetes application from scratch. The name was chosen because [baklava](https://en.wikipedia.org/wiki/Baklava) consists of small pieces, like we put many technologies together, and has many layers as in Docker images.
 
-## Technologies
+## Technologies & Tools
 
-- Terraform
-- Ansible
-- Kubespray
-- [Metallb](https://metallb.universe.tf/) load balancer
+- [Terraform Client](https://www.terraform.io)
+- [Runtastic Terraform Opennebula provider](https://github.com/runtastic/terraform-provider-opennebula)
+- [Ansible](https://www.ansible.com/)
+- [Kubespray](https://github.com/kubernetes-sigs/kubespray)
+- [Metallb](https://metallb.universe.tf/)
+- [Gluster](https://www.gluster.org)
 
 ## Usage
 
 ### 1-Pull the Docker image from Docker Hub
 
-#### To pull it:
-
-```shell
+```bash
 docker pull nlesc/baklava:latest
-```
-
-If you want to build the Docker image yourself:
-
-```shell
-docker build --network=host -t nlesc/baklava ./Docker
 ```
 
 ### 2-Settings
@@ -45,25 +39,25 @@ Edit **config/variables.tf** and set user credentials.
 
 ### 3-Deploy the cluster
 
-```shell
+```bash
 docker run --rm --net=host -it \
   -v $(pwd)/config:/baklava/config \
   -v $(pwd)/deployment:/baklava/deployment \
+  --user $(id -u):$(id -g) \
   nlesc/baklava:latest
 ```
 
 Confirm the planned changes by typing **yes**
 
-Configuration and the ssh-keys of the deployed cluster willbe stored under **deployment** folder.
-
+Configuration and the ssh-keys of each deployed cluster will be stored under **deployment/clusterX** folder.
 
 ## Connecting to the nodes
 
 ### ssh to nodes
 
-You can connecte to nodes using generated ssh keys. For example:
+You can connect to the nodes using generated ssh keys. For example:
 
-```shell
+```bash
 ssh -i ./deployment/cluster0/id_rsa_baklava root@SERVER_IP
 ```
 
@@ -71,37 +65,71 @@ ssh -i ./deployment/cluster0/id_rsa_baklava root@SERVER_IP
 
 ### Kubernetes dashboard
 
-You can connect to Kubernetes dashboard (web ui) using the link below.
+You can connect to Kubernetes dashboard (web-ui) using the link below.
 
 [https://MASTER_IP:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy](https://MASTER_IP:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy)
 
 **MASTER_IP** is the ip address of the master node (usually node1).
 
+In order to login to the dashboard,  you need to create an acount for the dashboard. Follow the steps below.
+- Create service account (run on the master node):
+```bash
+kubectl create serviceaccount cluster-admin-dashboard-sa
+```
+
+- Bind ClusterAdmin role to the service account (run on the master node):
+```bash
+kubectl create clusterrolebinding cluster-admin-dashboard-sa \
+  --clusterrole=cluster-admin \
+  --serviceaccount=default:cluster-admin-dashboard-sa
+```
+
 In order to login to the dashboard you will need a token. You can get the token by running the following command on the master node:
 
-```shell
-kubectl describe secret $(kubectl -n kube-system get secret | awk '/^cluster-admin-dashboard-sa-token-/{print $1}') | awk '$1=="token:"{print $2}'
+```bash
+kubectl describe secret $(kubectl -n kube-system get secret | awk '/^cluster-admin-dashboard-sa-token-/{print $1}') | awk '$1=="token:"{print $2}' | head -n1
 ```
 
 ### Kubernetes cluster info
 
 Basic info about the cluster can be obtained by running:
 
-```shell
+```bash
 kubectl cluster-info
 ```
 
 If you want to get more detailed info, you can run:
 
-```shell
+```bash
 kubectl cluster-info dump
 ```
 
-### Get list of pods
+List of nodes:
 
-```shell
-kubectl get --all-namespaces pods
+```bash
+kubectl get nodes
 ```
+
+List of podes:
+
+```bash
+kubectl get pods --all-namespaces 
+```
+
+Get detailed info about a pod:
+
+```bash
+kubectl describe pod kubernetes-dashboard-6c7466966c-q4z8q -n kube-system
+```
+
+List all services:
+
+```bash
+kubectl get services
+```
+
+### Kubernetes cheatsheet
+Some other useful example commands can be found in [Kubernetes cheatsheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/).
 
 ## Important notes
 
@@ -110,3 +138,4 @@ The firewall is disabled at the moment.
 ## TODO
 
 - Persistent volumes
+- Add links and credits
