@@ -42,12 +42,13 @@ import re
 import sys
 
 ROLES = ['all', 'kube-master', 'kube-node', 'etcd', 'k8s-cluster',
-         'calico-rr', 'gfs-cluster']
+         'calico-rr', 'heketi-node']
 PROTECTED_NAMES = ROLES
 AVAILABLE_COMMANDS = ['help', 'print_cfg', 'print_ips', 'load']
 _boolean_states = {'1': True, 'yes': True, 'true': True, 'on': True,
                    '0': False, 'no': False, 'false': False, 'off': False}
 yaml = YAML()
+yaml.preserve_quotes = True
 yaml.Representer.add_representer(OrderedDict, yaml.Representer.represent_dict)
 
 
@@ -65,6 +66,9 @@ MASSIVE_SCALE_THRESHOLD = int(os.environ.get("SCALE_THRESHOLD", 200))
 
 DEBUG = get_var_as_bool("DEBUG", True)
 HOST_PREFIX = os.environ.get("HOST_PREFIX", "node")
+
+HEKETI_ADMIN_KEY = os.environ.get("HEKETI_ADMIN_KEY", 'esciencerocks')
+HEKETI_USER_KEY = os.environ.get("HEKETI_USER_KEY", 'esciencerocks')
 
 # Configurable as shell vars end
 
@@ -91,7 +95,8 @@ class KubesprayInventory(object):
             changed_hosts = self.range2ips(changed_hosts)
             self.hosts = self.build_hostnames(changed_hosts)
             self.purge_invalid_hosts(self.hosts.keys(), PROTECTED_NAMES)
-            self.set_all(self.hosts)
+            all_vars = {'heketi_admin_key': HEKETI_ADMIN_KEY, 'heketi_user_key': HEKETI_USER_KEY}
+            self.set_all(hosts = self.hosts, vars = all_vars)
             self.set_k8s_cluster()
             etcd_hosts_count = 3 if len(self.hosts.keys()) >= 3 else 1
             self.set_etcd(list(self.hosts.keys())[:etcd_hosts_count])
@@ -102,8 +107,9 @@ class KubesprayInventory(object):
             self.set_kube_node(self.hosts.keys())
             if len(self.hosts) >= SCALE_THRESHOLD:
                 self.set_calico_rr(list(self.hosts.keys())[:etcd_hosts_count])
-            self.set_gfs_cluster(self.hosts)
-            self.set_network_storage()
+            heketi_vars = {'disk_volume_device_1': "/dev/vdb"}
+            self.set_heketi(hosts = self.hosts, vars = heketi_vars)
+
         else:  # Show help if no options
             self.show_help()
             sys.exit(0)
@@ -134,13 +140,14 @@ class KubesprayInventory(object):
             if group == 'all':
                 self.debug("Adding group {0}".format(group))
                 if group not in self.yaml_config:
-                    all_dict = OrderedDict([('hosts', OrderedDict({})),
+                    all_dict = OrderedDict([('vars', OrderedDict({})),
+                                            ('hosts', OrderedDict({})),
                                             ('children', OrderedDict({}))])
                     self.yaml_config = {'all': all_dict}
             else:
                 self.debug("Adding group {0}".format(group))
                 if group not in self.yaml_config['all']['children']:
-                    self.yaml_config['all']['children'][group] = {'hosts': {}}
+                    self.yaml_config['all']['children'][group] = {'vars': {}, 'hosts': {}}
 
     def get_host_id(self, host):
         '''Returns integer host ID (without padding) from a given hostname.'''
@@ -269,11 +276,21 @@ class KubesprayInventory(object):
             else:
                 self.yaml_config['all']['children'][group]['hosts'][host] = None  # noqa
 
+    def add_var_to_group(self, group, var, opts=""):
+        self.debug("adding var {0} to group {1}".format(var, group))
+        if group == 'all':
+            self.yaml_config['all']['vars'][var] = str(opts)
+        else:
+            self.yaml_config['all']['children'][group]['vars'][var] = str(opts)
+
     def set_kube_master(self, hosts):
         for host in hosts:
             self.add_host_to_group('kube-master', host)
 
-    def set_all(self, hosts):
+    def set_all(self, hosts, vars = None):
+        if vars is not None:
+            for var, opts in vars.items():
+                self.add_var_to_group('all', var, opts)
         for host, opts in hosts.items():
             self.add_host_to_group('all', host, opts)
 
@@ -313,13 +330,12 @@ class KubesprayInventory(object):
         for host in hosts:
             self.add_host_to_group('etcd', host)
 
-    def set_gfs_cluster(self, hosts):
+    def set_heketi(self, hosts, vars = None):
+        if vars is not None:
+            for var, opts in vars.items():
+                self.add_var_to_group('heketi-node', var, opts)
         for host in hosts:
-            self.add_host_to_group('gfs-cluster', host)
-
-    def set_network_storage(self):
-        network_storage = {'children': {'gfs-cluster': None}}
-        self.yaml_config['all']['children']['network_storage'] = network_storage
+            self.add_host_to_group('heketi-node', host)
 
     def load_file(self, files=None):
         '''Directly loads JSON to inventory.'''
