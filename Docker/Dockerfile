@@ -1,5 +1,10 @@
 FROM alpine:3.9
 
+# add user filo
+RUN addgroup -g 1000 filo && \
+    adduser -D -u 1000 -G filo filo
+#USER filo
+
 # install packages
 RUN apk update && \
   apk add --no-cache \
