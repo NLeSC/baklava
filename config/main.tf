@@ -54,6 +54,10 @@ resource "null_resource" "kubernetes" {
         }
 
         provisioner "local-exec" {
+                command = "sleep 30; ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${var.DEPLOY_FOLDER}/${var.cluster_name}/hosts.yaml /baklava/config/fix_glusterfs_ppa.yml --private-key=/baklava/id_rsa_baklava"
+        }
+
+        provisioner "local-exec" {
                 command = "sleep 30; ANSIBLE_HOST_KEY_CHECKING=False; cd /baklava/kubespray; ansible-playbook -b --become-user=root -i ${var.DEPLOY_FOLDER}/${var.cluster_name}/hosts.yaml --user=root /baklava/kubespray/contrib/network-storage/glusterfs/glusterfs.yml --private-key=/baklava/id_rsa_baklava -v"
         }
 

@@ -1,0 +1,17 @@
+---
+- hosts: localhost
+  # remote_user: root
+  # become: true
+  tasks:
+
+    - name: Set PPA version for server
+      lineinfile:
+        path: /baklava/kubespray/contrib/network-storage/glusterfs/roles/glusterfs/server/defaults/main.yml
+        regexp: '^glusterfs_ppa_version'
+        line: 'glusterfs_ppa_version: "6"'
+
+    - name: Set PPA version for client
+      lineinfile:
+        path: /baklava/kubespray/contrib/network-storage/glusterfs/roles/glusterfs/client/defaults/main.yml
+        regexp: '^glusterfs_ppa_version'
+        line: 'glusterfs_ppa_version: "6"'
