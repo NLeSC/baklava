@@ -35,7 +35,8 @@ Edit **config/opennebula_k8s.tpl** to adjust the following VM settings:
     NIC = [
       NETWORK = "INTERNAL_NETWORK_NAME",
       NETWORK_UNAME = "NETWORK_USERNAME" ]
-    SIZE = "DISK_SIZE_OF_PERSISTENT_VOLUME"
+
+There are two **SIZE** variables. The first one is for the cluster itselft and the second one is for the persistent storage. The default values are about 15G and 30G.
 
 #### 2.2 Credentials
 
