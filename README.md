@@ -1,6 +1,6 @@
 # Baklava
 
-This repository includes scripts to deploy a kubernetes cluster and applications from scratch. Currently, it supports Opennubula platform. 
+This repository includes scripts to deploy a kubernetes cluster and applications from scratch. Currently, it supports [OpenNebula](https://opennebula.org) platform. 
 
 The name was chosen because [baklava](https://en.wikipedia.org/wiki/Baklava) consists of small pieces, like we put many technologies together, and has many layers as in Docker images.
 
